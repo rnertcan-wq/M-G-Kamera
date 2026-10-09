@@ -36,3 +36,12 @@ Cloud makinesinde Java derlemesi, DEX üretimi, manifest paket/izin/başlatıcı
 
 ## 0.2 düzeltmesi
 Standart JPEG seçiminde getHighResolutionOutputSizes listesi de hesaba katılır. Özel HD metadata içinde HAL BLOB formatı 33, Android JPEG 256 ile eşlenir. Boyut bulunamayan denemeler size_not_advertised olarak kaydedilir. İlk cihaz testinde 3456×3456 JPEG başarılı olmuş; yüksek çözünürlük listesinde 4608×3456 mevcut, HD vendor listesinde 9216×6912 görünür. 64 MP gerçek çekim henüz doğrulanmamıştır.
+
+## CK7n üzerinde 0.2 fiziksel cihaz sonucu
+
+Kullanıcının Android 14 cihazından alınan 0.2 JSON raporunda iki test de `jpeg_received` olarak tamamlandı:
+
+- Standart JPEG: istenen ve alınan 4608×3456, 15.925248 MP, 5.122.037 bayt.
+- Özel HD JPEG: istenen ve alınan 9216×6912, 63.700992 MP, 14.929.440 bayt.
+
+Her iki çıktı boyutu isteğe eşleşti. Kamera ID 0, normal uygulama kamera izni ile kullanıldı. Denemede üreticiye özel CaptureRequest kontrolleri uygulanmadı. Uygulama ImageReader JPEG baytlarını büyütmeden MediaStore'a kaydetti. Bu sonuç 64 MP boyutunda JPEG almanın mümkün olduğunu gösterir; HAL'in doğal sensör ayrıntısı, görüntü kalitesi, video ve HDR geliştirmeleri henüz doğrulanmadı. Kaynak rapor kullanıcı cihazına ait olduğundan depoya yüklenmedi.

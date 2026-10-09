@@ -2,24 +2,29 @@
 
 TECNO Camon 20 Pro 4G (CK7n), Android 14 için bağımsız Android Camera2 prototipi. Orijinal kamera uygulamasını değiştirmez. OEM APK kodu, modelleri veya kütüphaneleri dağıtılmaz.
 
-## APK
+## Güncel APK ve tek test turu
 
-- [0.3 canlı önizlemeli prototip](downloads/MG-Kamera-0.3.apk)
-- [0.2 tanılama sürümü](downloads/MG-Kamera-Tanilama-0.2.apk)
+- [0.6 offline AI ve toplu test APK](downloads/MG-Kamera-AI-0.6.apk)
+- [0.6 ZIP](downloads/MG-Kamera-AI-0.6.zip)
+- [Tek tur test talimatları](TEST-BUNDLE.md)
 - [SHA-256 kontrol değerleri](downloads/SHA256SUMS)
 
-0.3 sürümü canlı önizleme, 16/64 MP seçimi, çekim öncesi AF/AE/AWB durumlarını bekleme, JPEG yönü ve desteklenen HQ gürültü azaltma/kenar işleme seçeneklerini içerir. Kamera izni dışında izin veya ağ bağlantısı istemez. Gerçek çekim boyutunu JPEG başlığından kaydeder; görüntüyü büyütmez.
+Bir araya getirilen özellikler: canlı önizleme, arka/ön kamera, standart ve cihazın açtığı HD fotoğraf boyutları, 3A bekleme, doğru JPEG yönü, dijital zoom, EV, 2/5/10 saniye zamanlayıcı, desteklenen HQ ISP seçenekleri, opsiyonel renkli gürültü filtresi, H.264 MP4 video (ilan edilen en fazla 1080p boyut, 30 fps istek), isteğe bağlı AAC ses, offline DnCNN AI denoise ve tek raporlu otomatik toplu test. Ön kamera HD boyutu uygulamaya ilan edilmiyorsa mevcut olduğu iddia edilmez.
 
-0.2, kullanıcının fiziksel CK7n cihazında 4608×3456 ve 9216×6912 JPEG üretmiştir. Bu, 64 MP boyutunda JPEG erişiminin çalıştığını kanıtlar. HAL'in doğal sensör ayrıntısı veya başka bir telefondan daha iyi görüntü kalitesi bu sonuçla kanıtlanmaz. 0.3'ün önizleme+JPEG kombinasyonu fiziksel cihazda henüz denenmemiştir; reddedilirse mod değiştirilerek tekrar denenebilir ve 0.2 tanılama sürümü kullanılabilir.
+AI gerçek bir pretrained DnCNN modelidir; [kaynak/lisans/doğrulama](third_party/SOURCES.md). Fotoğraf internete gönderilmez. İsteğe bağlı AI ve renkli gürültü işlemi orijinal JPEG'i korur, ayrıca aynı piksel boyutunda çıktı kaydeder. Model tam çözünürlükte 256'lık parçalarda, 20 piksel halo ile çalışır; çözünürlük büyütülmez. 64 MP işleme yavaştır ve dakikalar sürebilir. Orijinal + AI karşılaştırması kalite kararının temelidir; modeli çalıştırmak başka bir telefondan daha iyi kaliteyi kanıtlamaz. 16 MP ile AI aşaması toplu teste isteğe bağlı eklenir; manuel 64 MP AI mümkündür.
 
-## Çekim ve raporlar
+Bellek yetmez, işlem iptal edilir veya runtime başarısız olursa orijinal korunur ve AI başarısız/atlandı olarak raporlanır. CPU iki thread ile çalışır. ARM64 yerel runtime dahil; diğer işlemci mimarileri paketlenmemiştir. Geniş heap talep edilir, başlangıç bellek kontrolü ve parça sınırında iptal vardır. Öğrenilmiş model gürültüyü bastırırken ayrıntı kaybedebilir; 35% orijinal + 65% model çıktısı harmanı kullanılır. Renkli gürültü filtresi AI değildir; ayrı seçenektir.
 
-Fotoğraflar `Pictures/MGKamera`, çekim başına JSON raporları `Download/MGKamera` içine yazılır. Raporda istenen/alınan boyutlar, 3A bekleme sonucu ve uygulanan HQ seçenekleri bulunur. 3A beklemesi en fazla 3 saniyedir; tamamlanmazsa çekim yine yapılır ve `threeAConverged=false` olarak raporlanır. Görüntü kalitesi karşılaştırması için sabit kamera ve aynı sahne kullanın; HQ seçeneğini açıp kapatarak kontrollü karşılaştırma yapın.
+## Cihaz üzerinde doğrulananlar
 
-Önizleme en-boy oranını koruyarak ekran içine sığdırılır. Arka kameranın en büyük ilan edilmiş standart/yüksek çözünürlük boyutu 16 MP modu, üreticinin özel HD listesi ise 64 MP modu için kullanılır. 64 MP JPEG bu cihazda normal kamera izniyle ve özel CaptureRequest kontrolleri olmadan alınmıştır.
+0.2: kullanıcının fiziksel CK7n cihazında 4608×3456 ve 9216×6912 JPEG üretildi. 0.3: canlı önizleme + HD JPEG çalıştı, 3A hazır raporlandı ve fotoğraf boyutu dosyadan doğrulandı. Son karşılaştırmada üç çekimin EXIF pozlaması aynı (ISO 445, 0.010005 s, f/1.7). Orijinal TECNO 64 MP çekimi gölgelerde belirgin biçimde daha az renkli gürültü; M-G 0.3 metin kenarları daha az yumuşama gösteriyor. Bu tek sahne tüm kaliteyi ölçmez ve AI sürümünün başarısını kanıtlamaz.
 
-Henüz video kaydı, çok kareli HDR, özel gece algoritması, ön kamera arayüzü ve kalibre edilmiş ayrıntı/gürültü karşılaştırması yoktur. HQ, sürücünün mevcut ISP ayarlarını kullanır; yeni bir algoritmanın kalite üstünlüğü olarak sunulmaz.
+0.6: cloud makinesinde derleme, APK imzası, paket/model/native-libraries/lisans bütünlüğü, çözünürlük-format-yön regresyon kontrolleri, sentetik chroma testi ve DnCNN PyTorch/ONNX/tiling referans kontrolleri geçti. 0.6 video, ön kamera, toplu test, bellek/performance ve gerçek fotoğrafta AI kalitesi henüz fiziksel telefonda doğrulanmadı. Toplu test başarısız/iptal/eksik aşamaları geçmiş gibi saymaz.
 
-## Derleme ve doğrulama
+Gerçek çok kareli HDR, hizalanmış gece birleştirme, portre segmentasyonu, 4K/60 fps ve bir iPhone'a üstünlük bu sürümde uygulanmış veya doğrulanmış değildir. Donanımın açmadığı özellikler varmış gibi sunulmaz. Bunlar kalite hedefine yönelik sonraki geliştirmelerdir.
 
-[Tanılama/kurulum notları](TANILAMA.md) içindeki SDK değişkenlerini ayarlayın; `./build.sh` ile derleyin, `./test.sh` ile 10 çözünürlük/format/yön kontrolünü çalıştırın. Geçerli APK imzası geliştirme imzasıdır. Telefon fotoğrafları ve ham servis/JSON raporları depoya yüklenmez.
+## Çıktılar ve geliştirme
+
+Fotoğraflar `Pictures/MGKamera`; videolar `Movies/MGKamera`; çekim ve `MG-batch-...json` raporları `Download/MGKamera`. AI çıktısı `-ai.jpg`, renk filtresi `-chroma.jpg`. Yeni kamera kontrolleri alt kaydırılabilir paneldedir.
+
+[Tanılama/kurulum notları](TANILAMA.md) içindeki SDK değişkenlerini ayarlayın; `./build.sh` ile derleyin, `./test.sh` ile unit/regresyon kontrollerini çalıştırın. Native runtime/model assets repoda hazırdır. SDK/ECJ sistem kurulumu dışındaki uygulama bağımlılıkları ağdan çalışma anında indirilmez. İmza geliştirme imzasıdır. Telefon fotoğrafları ve ham servis/JSON raporları depoya yüklenmez.

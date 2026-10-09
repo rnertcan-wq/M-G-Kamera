@@ -22,6 +22,9 @@ public final class CameraMath {
         return best;
     }
     public static int jpegOrientation(int sensorDegrees,int displayDegrees) {
-        return ((sensorDegrees-displayDegrees)%360+360)%360;
+        return jpegOrientation(sensorDegrees,displayDegrees,false);
+    }
+    public static int jpegOrientation(int sensorDegrees,int displayDegrees,boolean front) {
+        return ((sensorDegrees+(front?displayDegrees:-displayDegrees))%360+360)%360;
     }
 }

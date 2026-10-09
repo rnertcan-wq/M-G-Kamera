@@ -90,7 +90,7 @@ public final class MainActivity extends Activity {
         JSONObject old = report;
         report = new JSONObject(); backId = null; back = null;
         try {
-            report.put("schema",1).put("appVersion","0.3-prototype").put("model",Build.MODEL)
+            report.put("schema",1).put("appVersion","0.6-prototype").put("model",Build.MODEL)
                 .put("android",Build.VERSION.RELEASE).put("sdk",Build.VERSION.SDK_INT)
                 .put("cameraPermission",checkSelfPermission(Manifest.permission.CAMERA)==PackageManager.PERMISSION_GRANTED)
                 .put("captureTests",old.optJSONArray("captureTests") == null ? new JSONArray() : old.optJSONArray("captureTests"));

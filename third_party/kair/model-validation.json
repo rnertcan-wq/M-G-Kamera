@@ -1,0 +1,12 @@
+{
+  "model": "KAIR DnCNN color blind",
+  "license": "MIT (KAIR)",
+  "onnxSha256": "11fed3af8c0de2e7e6ac90d946220191c75707467f6a05849be2f01429414aaf",
+  "referenceMaxAbsoluteError": 1.6689300537109375e-06,
+  "tileMaxAbsoluteError": 0.0,
+  "syntheticInputMSE": 0.003424515249207616,
+  "syntheticOutputMSE": 1.3001543266000226e-05,
+  "96x96InferenceSecondsHost": 0.09251714199945127,
+  "phoneRuntimeValidated": false,
+  "realCameraQualityValidated": false
+}

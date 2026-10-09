@@ -1,8 +1,9 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.mgkamera.diagnostic" android:versionCode="3" android:versionName="0.3-prototype">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.mgkamera.diagnostic" android:versionCode="6" android:versionName="0.6-prototype">
   <uses-sdk android:minSdkVersion="31" android:targetSdkVersion="35" />
   <uses-permission android:name="android.permission.CAMERA" />
+  <uses-permission android:name="android.permission.RECORD_AUDIO" />
   <uses-feature android:name="android.hardware.camera.any" android:required="true" />
-  <application android:label="M-G Kamera" android:theme="@android:style/Theme.Material.NoActionBar" android:allowBackup="false" android:supportsRtl="true">
+  <application android:label="M-G Kamera" android:theme="@android:style/Theme.Material.NoActionBar" android:allowBackup="false" android:largeHeap="true" android:supportsRtl="true">
     <activity android:name=".MainActivity" android:exported="false" />
     <activity android:name=".CameraActivity" android:exported="true">
       <intent-filter><action android:name="android.intent.action.MAIN"/><category android:name="android.intent.category.LAUNCHER"/></intent-filter>

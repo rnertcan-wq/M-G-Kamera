@@ -22,6 +22,11 @@ public final class CameraMathTest {
             checks++;
             if(CameraMath.jpegOrientation(90,i*90)!=orientations[i])throw new AssertionError("Orientation "+i);
         }
+        int[] frontOrientations={270,0,90,180};
+        for(int i=0;i<4;i++) {
+            checks++;
+            if(CameraMath.jpegOrientation(270,i*90,true)!=frontOrientations[i])throw new AssertionError("Front orientation "+i);
+        }
         System.out.println(checks+" regression checks passed");
     }
 }

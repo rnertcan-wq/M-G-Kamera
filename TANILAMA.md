@@ -45,3 +45,9 @@ Kullanıcının Android 14 cihazından alınan 0.2 JSON raporunda iki test de `j
 - Özel HD JPEG: istenen ve alınan 9216×6912, 63.700992 MP, 14.929.440 bayt.
 
 Her iki çıktı boyutu isteğe eşleşti. Kamera ID 0, normal uygulama kamera izni ile kullanıldı. Denemede üreticiye özel CaptureRequest kontrolleri uygulanmadı. Uygulama ImageReader JPEG baytlarını büyütmeden MediaStore'a kaydetti. Bu sonuç 64 MP boyutunda JPEG almanın mümkün olduğunu gösterir; HAL'in doğal sensör ayrıntısı, görüntü kalitesi, video ve HDR geliştirmeleri henüz doğrulanmadı. Kaynak rapor kullanıcı cihazına ait olduğundan depoya yüklenmedi.
+
+## 0.3 prototip
+
+Launcher artık CameraActivity'dir: canlı TextureView önizleme + JPEG ImageReader oturumu; 16/64 MP seçimi; AF/AE/AWB bekleme (en çok 3 saniye); destekleniyorsa HQ ISP noise reduction ve edge seçenekleri; JPEG_ORIENTATION. Tanılama ekranı ayrı düğmeyle açılır. Önizleme+64 MP oturumu 0.2 JPEG-only oturumundan farklıdır ve fiziksel cihazda ayrıca doğrulanmalıdır. APK derlemesi/imzası ve CameraMath için 10 regresyon kontrolü cloud ortamında başarılıdır. Fotoğraf kalite artışı ölçülmüş değildir.
+
+Kullanıcının yüklediği 0.2 JPEG'leri başlık ve EXIF düzeyinde doğrulanmıştır. 64 MP fotoğraf 9216×6912 / 14.929.440 bayt; 16 MP fotoğraf 4608×3456 / 5.122.037 bayt. İkisinde ISO 167, 0.010006 saniye pozlama, f/1.7, 5.249 mm odak uzunluğu. Sahne/kadraj değişmiştir ve stock kamera karşılaştırması yoktur; netlik veya kalite üstünlüğü sonucu çıkarılmadı. Fotoğraflar repo dışında tutuldu.

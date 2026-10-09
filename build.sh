@@ -5,10 +5,10 @@ cd "$(dirname "$0")"
 : "${MG_ANDROID_BUILD_TOOLS:?Set MG_ANDROID_BUILD_TOOLS to Android build-tools 35.0.0 directory}"
 mkdir -p build/classes build/dex
 if command -v javac >/dev/null; then
-  javac -encoding UTF-8 --release 8 -classpath "$MG_ANDROID_PLATFORM/android.jar" -d build/classes app/src/main/java/com/mgkamera/diagnostic/MainActivity.java
+  javac -encoding UTF-8 --release 8 -classpath "$MG_ANDROID_PLATFORM/android.jar" -d build/classes $(find app/src/main/java -name '*.java')
 else
   : "${MG_ECJ_JAR:?Set MG_ECJ_JAR to Eclipse compiler ecj-3.39.0.jar when javac is unavailable}"
-  java -jar "$MG_ECJ_JAR" -encoding UTF-8 -source 8 -target 8 -bootclasspath "$MG_ANDROID_PLATFORM/android.jar:$MG_ANDROID_BUILD_TOOLS/core-lambda-stubs.jar" -d build/classes app/src/main/java/com/mgkamera/diagnostic/MainActivity.java
+  java -jar "$MG_ECJ_JAR" -encoding UTF-8 -source 8 -target 8 -bootclasspath "$MG_ANDROID_PLATFORM/android.jar:$MG_ANDROID_BUILD_TOOLS/core-lambda-stubs.jar" -d build/classes $(find app/src/main/java -name '*.java')
 fi
 "$MG_ANDROID_BUILD_TOOLS/d8" --lib "$MG_ANDROID_PLATFORM/android.jar" --min-api 31 --output build/dex $(find build/classes -name '*.class')
 "$MG_ANDROID_BUILD_TOOLS/aapt2" link -I "$MG_ANDROID_PLATFORM/android.jar" --manifest app/src/main/AndroidManifest.xml -o build/unsigned.apk

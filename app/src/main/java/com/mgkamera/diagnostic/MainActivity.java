@@ -90,7 +90,7 @@ public final class MainActivity extends Activity {
         JSONObject old = report;
         report = new JSONObject(); backId = null; back = null;
         try {
-            report.put("schema",1).put("appVersion","0.2-diagnostic").put("model",Build.MODEL)
+            report.put("schema",1).put("appVersion","0.3-prototype").put("model",Build.MODEL)
                 .put("android",Build.VERSION.RELEASE).put("sdk",Build.VERSION.SDK_INT)
                 .put("cameraPermission",checkSelfPermission(Manifest.permission.CAMERA)==PackageManager.PERMISSION_GRANTED)
                 .put("captureTests",old.optJSONArray("captureTests") == null ? new JSONArray() : old.optJSONArray("captureTests"));
@@ -158,12 +158,8 @@ public final class MainActivity extends Activity {
         if(back==null) return null;
         for(CameraCharacteristics.Key<?> key:back.getKeys()) if(key.getName().equals("com.transsion.availableHDStreamConfigurations")) {
             Object v=back.get(key); if(!(v instanceof int[])) return null;
-            int[] a=(int[])v; Size best=null;
-            for(int i=0;i+3<a.length;i+=4) if((a[i]==33 || a[i]==ImageFormat.JPEG) && a[i+3]==0 && a[i+1]>0 && a[i+2]>0) {
-                Size s=new Size(a[i+1],a[i+2]);
-                if(best==null || (long)s.getWidth()*s.getHeight()>(long)best.getWidth()*best.getHeight()) best=s;
-            }
-            return best;
+            int[] best=CameraMath.vendorJpeg((int[])v);
+            return best==null?null:new Size(best[0],best[1]);
         }
         return null;
     }

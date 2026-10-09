@@ -1,4 +1,4 @@
-# M-G Kamera Tanılama 0.1
+# M-G Kamera Tanılama 0.2
 
 TECNO CK7n / Android 14 için bağımsız Camera2 ölçüm uygulaması. Orijinal TECNO uygulamasını değiştirmez ve OEM kodu/kütüphanesi içermez. Yalnızca kamera izni ister; internet izni yoktur.
 
@@ -33,3 +33,6 @@ export MG_ECJ_JAR=/workspace/android-tools/ecj-3.39.0.jar
 ## Doğrulama sınırı
 
 Cloud makinesinde Java derlemesi, DEX üretimi, manifest paket/izin/başlatıcı kontrolü ve APK imza doğrulaması yapılmıştır. Fiziksel telefon ve Android emülatörü cloud makinesine bağlı değildir; yükleme, UI ve gerçek çekim sonuçları henüz doğrulanmamıştır.
+
+## 0.2 düzeltmesi
+Standart JPEG seçiminde getHighResolutionOutputSizes listesi de hesaba katılır. Özel HD metadata içinde HAL BLOB formatı 33, Android JPEG 256 ile eşlenir. Boyut bulunamayan denemeler size_not_advertised olarak kaydedilir. İlk cihaz testinde 3456×3456 JPEG başarılı olmuş; yüksek çözünürlük listesinde 4608×3456 mevcut, HD vendor listesinde 9216×6912 görünür. 64 MP gerçek çekim henüz doğrulanmamıştır.

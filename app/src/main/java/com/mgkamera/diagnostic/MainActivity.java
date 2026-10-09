@@ -90,7 +90,7 @@ public final class MainActivity extends Activity {
         JSONObject old = report;
         report = new JSONObject(); backId = null; back = null;
         try {
-            report.put("schema",1).put("appVersion","0.1-diagnostic").put("model",Build.MODEL)
+            report.put("schema",1).put("appVersion","0.2-diagnostic").put("model",Build.MODEL)
                 .put("android",Build.VERSION.RELEASE).put("sdk",Build.VERSION.SDK_INT)
                 .put("cameraPermission",checkSelfPermission(Manifest.permission.CAMERA)==PackageManager.PERMISSION_GRANTED)
                 .put("captureTests",old.optJSONArray("captureTests") == null ? new JSONArray() : old.optJSONArray("captureTests"));
@@ -122,7 +122,7 @@ public final class MainActivity extends Activity {
                     JSONArray requests = new JSONArray(); c.put("vendorRequestKeys",requests);
                     List<CaptureRequest.Key<?>> keys = ch.getAvailableCaptureRequestKeys();
                     if(keys!=null) for(CaptureRequest.Key<?> k:keys) if(!k.getName().startsWith("android.")) requests.put(k.getName());
-                    Size max = maxSize(map == null ? null : map.getOutputSizes(ImageFormat.JPEG));
+                    Size max = maxJpegSize(map);
                     long area = max == null ? 0 : (long)max.getWidth()*max.getHeight();
                     if(Objects.equals(ch.get(CameraCharacteristics.LENS_FACING),CameraCharacteristics.LENS_FACING_BACK) && area>largest) {
                         largest=area; backId=id; back=ch;
@@ -146,12 +146,20 @@ public final class MainActivity extends Activity {
     private static Size maxSize(Size[] list) {
         Size best=null; if(list!=null) for(Size s:list) if(best==null || (long)s.getWidth()*s.getHeight()>(long)best.getWidth()*best.getHeight()) best=s; return best;
     }
+    private static Size maxJpegSize(StreamConfigurationMap map) {
+        if (map == null) return null;
+        Size normal = maxSize(map.getOutputSizes(ImageFormat.JPEG));
+        Size high = maxSize(map.getHighResolutionOutputSizes(ImageFormat.JPEG));
+        if (normal == null) return high;
+        if (high == null) return normal;
+        return (long)high.getWidth()*high.getHeight() > (long)normal.getWidth()*normal.getHeight() ? high : normal;
+    }
     private Size vendorSize() {
         if(back==null) return null;
         for(CameraCharacteristics.Key<?> key:back.getKeys()) if(key.getName().equals("com.transsion.availableHDStreamConfigurations")) {
             Object v=back.get(key); if(!(v instanceof int[])) return null;
             int[] a=(int[])v; Size best=null;
-            for(int i=0;i+3<a.length;i+=4) if(a[i]==ImageFormat.JPEG && a[i+3]==0 && a[i+1]>0 && a[i+2]>0) {
+            for(int i=0;i+3<a.length;i+=4) if((a[i]==33 || a[i]==ImageFormat.JPEG) && a[i+3]==0 && a[i+1]>0 && a[i+2]>0) {
                 Size s=new Size(a[i+1],a[i+2]);
                 if(best==null || (long)s.getWidth()*s.getHeight()>(long)best.getWidth()*best.getHeight()) best=s;
             }
@@ -168,9 +176,16 @@ public final class MainActivity extends Activity {
         if(busy || back==null) return;
         Size size;
         try {
-            size= high ? vendorSize() : maxSize(back.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP).getOutputSizes(ImageFormat.JPEG));
+            size= high ? vendorSize() : maxJpegSize(back.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP));
         } catch(Exception e) { Toast.makeText(this,e.toString(),1).show(); return; }
-        if(size==null) { Toast.makeText(this,"İstenen JPEG boyutu bu uygulamaya sunulmuyor",1).show(); return; }
+        if(size==null) {
+            try {
+                report.getJSONArray("captureTests").put(new JSONObject()
+                    .put("mode", high ? "vendor-HD-session-probe" : "standard-JPEG")
+                    .put("camera",backId).put("status","size_not_advertised"));
+            } catch(Exception ignored) {}
+            refresh(); Toast.makeText(this,"İstenen JPEG boyutu bu uygulamaya sunulmuyor",1).show(); return;
+        }
         busy=true; refresh(); int token=++generation;
         JSONObject test=new JSONObject();
         try {
